@@ -81,6 +81,7 @@ const AIBottomSheet = ({ onClose }: { onClose: () => void }) => {
                                     placeholder="Ask anything about your trip..."
                                     placeholderTextColor="#888"
                                     style={styles.input}
+                                    returnKeyType="done"
                                 />
                                 <Button title="Send" onPress={handleSend} disabled={aiThinking} />
                             </View>

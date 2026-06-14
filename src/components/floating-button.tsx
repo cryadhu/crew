@@ -1,6 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import React from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 type FloatingActionButtonProps = {
     onPress?: () => void;
@@ -9,6 +10,7 @@ type FloatingActionButtonProps = {
     bottom?: number;
     right?: number;
     backgroundColor?: string;
+    position?: string
 };
 
 const FloatingButton: React.FC<FloatingActionButtonProps> = ({
@@ -18,9 +20,12 @@ const FloatingButton: React.FC<FloatingActionButtonProps> = ({
     bottom = 20,
     right = 20,
     backgroundColor = '#6200ee',
+    position = 'bottom'
 }) => {
+    const insets = useSafeAreaInsets()
+    const positionStyle = position === 'bottom' ? { bottom: 20 + insets.bottom} : { top: 20 + insets.top }
     return (
-        <View style={[styles.container, { bottom, right }]}>
+        <View style={[styles.container, { right },positionStyle]}>
             <TouchableOpacity
                 style={[
                     styles.button,
