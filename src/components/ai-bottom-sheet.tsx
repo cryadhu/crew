@@ -52,7 +52,7 @@ const AIBottomSheet = ({ onClose }: { onClose: () => void }) => {
                     <KeyboardAvoidingView
                         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
                         keyboardVerticalOffset={80}
-                        style={{ flex: 1 }}
+                        style={{ flex: 1, }}
                     >
                         <View style={styles.sheet}>
                             <View style={styles.header}>
@@ -103,7 +103,6 @@ const styles = StyleSheet.create({
         bottom: 0,
     },
     sheet: {
-        height: '80%',
         padding: 12,
         flex: 1,
     },
