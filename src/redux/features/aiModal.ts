@@ -1,23 +1,42 @@
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
+import { generateResponse } from '@/mocks/ai';
+import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 export interface AIMessage {
     text: string,
     timestamp: number,
     role: 'user' | 'ai',
-    loading?: boolean
+    loading?: boolean,
 }
 
 export interface AIModalState {
     modalOpen: boolean,
     messages: AIMessage[],
-    aiThinking: boolean
+    aiThinking: boolean,
+    streamingResponse: string,
 }
 
 const initialState: AIModalState = {
     modalOpen: false,
     messages: [],
-    aiThinking: false
+    aiThinking: false,
+    streamingResponse: ""
 }
+
+export const processAIOutput = createAsyncThunk(
+    'message/processAIOutput',
+    async (aiTS: number, thunkAPI) => {
+        generateResponse((partial) => {
+            thunkAPI.dispatch(setStreamingMessage(partial));
+        }, (final: string) => {
+            thunkAPI.dispatch(setStreamingMessage(''));
+            thunkAPI.dispatch(setAINotThinking());
+            thunkAPI.dispatch(updateMessage({
+                key: aiTS,
+                message: final
+            }))
+        })
+    }
+);
 
 export const sendUserInput = createAsyncThunk(
     'message/sendUserInput',
@@ -27,15 +46,21 @@ export const sendUserInput = createAsyncThunk(
             timestamp: new Date().getTime(),
             role: 'user'
         }
-        const aiPayload: AIMessage = {
-            text: '',
-            timestamp: new Date().getTime(),
-            role: 'ai',
-            loading: true
-        }
         thunkAPI.dispatch(pushMessage(payload))
-        thunkAPI.dispatch(setAIThinking());
-        thunkAPI.dispatch(pushMessage(aiPayload))
+        setTimeout(() => {
+            const aiTS = new Date().getTime()
+            const aiPayload: AIMessage = {
+                text: '',
+                timestamp: aiTS,
+                role: 'ai',
+                loading: true
+            }
+            thunkAPI.dispatch(setAIThinking());
+            thunkAPI.dispatch(pushMessage(aiPayload))
+            setTimeout(() => {
+                thunkAPI.dispatch(processAIOutput(aiTS))
+            }, 500);
+        }, 100)
     },
 )
 
@@ -52,15 +77,28 @@ export const aiModalSlice = createSlice({
             messages.push(action.payload)
             state.messages = messages
         },
+        updateMessage: (state, action: PayloadAction<{ message: string, key: number }>) => {
+            const messages = [...state.messages]
+            const msg = messages.find(item => item.timestamp === action.payload.key);
+            msg!!.text = action.payload.message;
+            msg!!.loading = false
+            state.messages = messages
+        },
         setAIThinking: (state) => {
             state.aiThinking = true
         },
         setAINotThinking: (state) => {
             state.aiThinking = false
+        },
+        setStreamingMessage: (state, action) => {
+            state.streamingResponse = action.payload
         }
     }
 })
 
-export const { toggleModal, pushMessage, setAIThinking, setAINotThinking } = aiModalSlice.actions
+export const {
+    toggleModal, pushMessage, setAIThinking,
+    setAINotThinking, setStreamingMessage, updateMessage
+} = aiModalSlice.actions
 
 export default aiModalSlice.reducer

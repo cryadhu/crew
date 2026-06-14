@@ -1,8 +1,16 @@
 import { AIMessage } from "@/redux/features/aiModal";
+import { RootState } from "@/redux/store";
 import { StyleSheet, Text, View } from "react-native";
+import { useSelector } from "react-redux";
 import TypingIndicator from "./typing-indicator";
 
 const AIResponseItem = ({ item }: { item: AIMessage }) => {
+    const { streamingResponse } = useSelector(
+        (state: RootState) => state.aiModal
+    );
+    if (item.loading && streamingResponse.length) {
+        return null
+    }
     return (
         <View
             style={[

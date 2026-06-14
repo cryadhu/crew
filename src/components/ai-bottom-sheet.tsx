@@ -23,7 +23,7 @@ import AIResponseItem from './ai-response-item';
 import ListView from './list-view';
 
 const AIBottomSheet = ({ onClose }: { onClose: () => void }) => {
-    const { modalOpen, messages, aiThinking } = useSelector(
+    const { modalOpen, messages, aiThinking, streamingResponse } = useSelector(
         (state: RootState) => state.aiModal
     );
 
@@ -69,8 +69,10 @@ const AIBottomSheet = ({ onClose }: { onClose: () => void }) => {
                                 style={styles.chat}
                                 keyboardShouldPersistTaps="handled"
                                 contentContainerStyle={{ paddingBottom: 16 }}
+                                ListFooterComponent={
+                                    <Text>{streamingResponse}</Text>
+                                }
                             />
-
                             {/* Input */}
                             <View style={styles.inputRow}>
                                 <TextInput
@@ -80,7 +82,7 @@ const AIBottomSheet = ({ onClose }: { onClose: () => void }) => {
                                     placeholderTextColor="#888"
                                     style={styles.input}
                                 />
-                                <Button title="Send" onPress={handleSend} disabled={aiThinking}/>
+                                <Button title="Send" onPress={handleSend} disabled={aiThinking} />
                             </View>
                         </View>
                     </KeyboardAvoidingView>

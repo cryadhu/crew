@@ -32,7 +32,24 @@ const response = [
         "paragraph": "International travel introduces people to new languages, perspectives, and ways of life. Navigating unfamiliar environments can be both challenging and rewarding, encouraging personal growth and adaptability while creating lasting memories from unique experiences."
     }
 ]
-const generateResponse = () => {
-    const index = Math.random() * response.length;
-    return response[index]
+const getResponse = () => {
+    const index = Math.floor(Math.random() * response.length);
+    return response[index].paragraph
 }
+
+const generateResponse = (onUpdate = (text: string) => { }, onDone = (text: string) => { }) => {
+    const text = getResponse()
+    let index = 0;
+    const interval = setInterval(() => {
+        onUpdate(text.slice(0, index + 1));
+        index++;
+        if (index >= text.length) {
+            clearInterval(interval);
+            onDone(text);
+        }
+    }, 15);
+
+    return () => clearInterval(interval);
+};
+
+export { generateResponse };
