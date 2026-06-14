@@ -33,8 +33,10 @@ const FeedItem = ({
     return (
         <View style={styles.card}>
             <Image
-                source={{ uri: imageUri }}
+                source={{ uri: imageUri}}
                 style={styles.heroImage}
+                placeholder={{blurhash:"LGF5?xYk^6#M@-5c,1J5@[or[Q6." }}
+                transition={2000}
             />
 
             <View style={styles.content}>
