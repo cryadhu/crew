@@ -31,7 +31,7 @@ export function Collapsible({ children, title }: PropsWithChildren & { title: st
       </Pressable>
       {isOpen && (
         <Animated.View entering={FadeIn.duration(200)}>
-          <ThemedView type="backgroundElement" style={styles.content}>
+          <ThemedView  style={styles.content}>
             {children}
           </ThemedView>
         </Animated.View>
@@ -59,7 +59,5 @@ const styles = StyleSheet.create({
   content: {
     marginTop: Spacing.three,
     borderRadius: Spacing.three,
-    marginLeft: Spacing.four,
-    padding: Spacing.four,
   },
 });
